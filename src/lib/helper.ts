@@ -1,3 +1,5 @@
+import * as k8s from "@kubernetes/client-node"
+
 export function parseArgs(): { context: string; namespace: string } {
   const args = process.argv.slice(2);
   let context = '';
@@ -17,4 +19,34 @@ export function parseArgs(): { context: string; namespace: string } {
   }
 
   return { context, namespace };
+}
+
+export function kubeCoreClient(contextName?: string): k8s.CoreV1Api {
+  const kc = new k8s.KubeConfig();
+  // loads ~/.kube/config
+  kc.loadFromDefault();
+
+  if (contextName) {
+    kc.setCurrentContext(contextName);
+    console.log(`=> Using context: ${contextName}`);
+  } else {
+    console.log(`🧠 Using default context: ${kc.getCurrentContext()}`);
+  }
+
+  return kc.makeApiClient(k8s.CoreV1Api);
+}
+
+export function kubeNetworkingClient(contextName?: string): k8s.NetworkingV1Api {
+  const kc = new k8s.KubeConfig();
+  // loads ~/.kube/config
+  kc.loadFromDefault();
+
+  if (contextName) {
+    kc.setCurrentContext(contextName);
+    console.log(`=> Using context: ${contextName}`);
+  } else {
+    console.log(`🧠 Using default context: ${kc.getCurrentContext()}`);
+  }
+
+  return kc.makeApiClient(k8s.NetworkingV1Api);
 }

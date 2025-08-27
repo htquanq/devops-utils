@@ -1,21 +1,5 @@
-import * as k8s from "@kubernetes/client-node"
 import * as kubectlHelper from "./lib/kubectl"
 import * as helper from "./lib/helper"
-
-function loadKubeClient(contextName?: string): k8s.CoreV1Api {
-  const kc = new k8s.KubeConfig();
-  // loads ~/.kube/config
-  kc.loadFromDefault();
-
-  if (contextName) {
-    kc.setCurrentContext(contextName);
-    console.log(`=> Using context: ${contextName}`);
-  } else {
-    console.log(`🧠 Using default context: ${kc.getCurrentContext()}`);
-  }
-
-  return kc.makeApiClient(k8s.CoreV1Api);
-}
 
 async function getEverything(context: string, namespace: string){
   console.log(`Getting resources on cluster: ${context}, namespace: ${namespace}`)
@@ -26,7 +10,7 @@ async function getEverything(context: string, namespace: string){
 async function getTotalRequestsAndLimits(context: string, namespace: string) {
 
   // Create API client for interacting with K8s server
-  const k8sApi = loadKubeClient(context);
+  const k8sApi = helper.kubeCoreClient(context);
 
   // list all pods in target namespace
   const pods = await k8sApi.listNamespacedPod({namespace});
@@ -55,7 +39,7 @@ async function getTotalRequestsAndLimits(context: string, namespace: string) {
 }
 
 async function getPVC(context: string, namespace: string) {
-  const k8sApi = loadKubeClient(context);
+  const k8sApi = helper.kubeCoreClient(context);
 
   // list all PVC in target namespaces
   const pvcs = await k8sApi.listNamespacedPersistentVolumeClaim({namespace});
