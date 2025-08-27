@@ -9,12 +9,17 @@ async function listAllIngresses(context: string, namespace: string) {
   const ingresses = await k8sApi.listNamespacedIngress({ namespace });
 
   console.log(`Found ${ingresses.items.length} ingresses:`);
+  var hosts: string[] = [];
   ingresses.items.forEach(ingress => {
     // console.log(`- Name: ${ingress.metadata?.name}`)
     ingress.spec?.rules?.forEach(rule => {
-      console.log(`- Host: ${rule.host}`)
+      if (rule.host) {
+        hosts.push(rule.host)
+      }
     })
   })
+
+  console.log([...new Set(hosts)].join(', '))
 }
 
 const { context, namespace } = helper.parseArgs();
