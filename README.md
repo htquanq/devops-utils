@@ -16,3 +16,8 @@ Total Memory Limits:   14080 Mi
 => Using context: xxx
 Total PVC: 8192 Mi
 ```
+
+# Get K8s resources(deployments, statefulsets, ingresses, etc) of one namespace and output to YAML files
+```shell
+npx ts-node src/allV1.ts --context=<context_name> --namespace=<namespace>
+```
